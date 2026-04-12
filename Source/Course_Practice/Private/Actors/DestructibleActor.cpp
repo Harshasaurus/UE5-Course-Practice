@@ -1,0 +1,60 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Actors/DestructibleActor.h"
+#include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Actors/Treasure.h"
+
+
+// Sets default values
+ADestructibleActor::ADestructibleActor()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	GeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("GeometryCollection"));
+	RootComponent = GeometryCollection;
+	GeometryCollection->SetGenerateOverlapEvents(true);	
+	GeometryCollection->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GeometryCollection->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+	Capsule->SetupAttachment(GetRootComponent());
+
+	Capsule->SetCollisionResponseToChannels(ECollisionResponse::ECR_Ignore);
+	Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+
+	
+}
+
+// Called when the game starts or when spawned
+void ADestructibleActor::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+// Called every frame
+void ADestructibleActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void ADestructibleActor::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	//Setting the Random Teasure Drop inside Destructible actor
+	if (bBroken) return;
+	bBroken = true;
+	UWorld* World = GetWorld();
+	if (World && TreasureClasses.Num() > 0) {
+
+		FVector Location = GetActorLocation();
+		Location.Z += 75.f;
+
+		const int32 Selection = FMath::RandRange(0, TreasureClasses.Num() - 1);
+		World->SpawnActor<ATreasure>(TreasureClasses[Selection], Location, GetActorRotation());
+	}
+}
+
