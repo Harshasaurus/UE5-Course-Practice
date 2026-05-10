@@ -21,7 +21,9 @@ public:
 	AWeapon();
 	void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
 	void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
-	virtual void Tick(float DeltaTime) override;	
+	virtual void Tick(float DeltaTime) override;
+	void WeaponHover();
+
 	TArray<AActor*> IgnoredActors;
 
 	

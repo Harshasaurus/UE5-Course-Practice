@@ -42,14 +42,19 @@ void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	RunningTime += DeltaTime;
+	WeaponHover();
+
+
+}
+
+void AWeapon::WeaponHover()
+{
 
 	if (ItemState == EItemState::EIS_Hovering) {
 
 		const float Z = TransformedSin();
 		AddActorWorldOffset(FVector(0.f, 0.f, Z));
 	}
-
-
 }
 
 
@@ -107,7 +112,7 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	}
 
 	FHitResult BoxHit;
-	UKismetSystemLibrary::BoxTraceSingle(
+	UKismetSystemLibrary::BoxTraceSingle(		
 		this,
 		Start,
 		End,
@@ -119,7 +124,9 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		EDrawDebugTrace::None,
 		BoxHit,
 		true
+		
 	);
+	
 	if (BoxHit.GetActor()) {
 
 	UGameplayStatics::ApplyDamage(

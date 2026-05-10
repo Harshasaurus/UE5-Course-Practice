@@ -76,10 +76,12 @@ void AHero::JumpStarted(const FInputActionValue& Value)
 {
 	if (ActionState == EActionState::EAS_Attacking) return;
 	Jump();
+
 }
 
 void AHero::JumpStopped(const FInputActionValue& Value)
 {
+	
 	StopJumping();
 
 }
@@ -145,7 +147,9 @@ void AHero::AttackEnd()
 bool AHero::CanAttack()
 {
 	return ActionState == EActionState::EAS_Unoccupied &&
-		   CharacterState != ECharacterState::ECS_Unequipped;;
+		CharacterState != ECharacterState::ECS_Unequipped &&
+		!GetCharacterMovement()->IsFalling();
+
 }
 
 
@@ -203,7 +207,7 @@ void AHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHero::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AHero::JumpStarted);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AHero::JumpStopped);
-		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AHero::EKeyPressed);
+		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Started, this, &AHero::EKeyPressed);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AHero::Attack);
 
 
